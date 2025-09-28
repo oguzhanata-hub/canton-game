@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elara's Adventure: The Canton Network Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background-color: #0a0a2a;
+            color: #e0e0ff;
+        }
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle at top left, rgba(20, 30, 100, 0.3), transparent 40%),
+                              radial-gradient(circle at bottom right, rgba(50, 20, 120, 0.3), transparent 40%);
+            z-index: -1;
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .option-btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(74, 85, 104, 0.4);
+            background-color: #4a5568;
+        }
+        .feedback {
+            animation: feedback-pop 0.5s ease-out forwards;
+        }
+        @keyframes feedback-pop {
+            0% { transform: scale(0.9); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 flex items-center justify-center h-screen p-4">
+
+    <div id="game-container" class="game-container relative w-full max-w-3xl mx-auto bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-10 border border-slate-700 overflow-hidden">
+        
+        <div id="header" class="text-center mb-6">
+            <h1 class="text-2xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-500">Elara's Adventure</h1>
+            <p class="text-slate-400 text-sm sm:text-base mt-1">Building the Financial Internet</p>
+        </div>
+        
+        <div id="story-content" class="fade-in">
+            <div id="image-container" class="mb-6 text-center">
+                 <!-- Image will be loaded here -->
+            </div>
+            <div id="story-text" class="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 min-h-[150px]">
+                <!-- Story text will be loaded here -->
+            </div>
+            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Option buttons will be loaded here -->
+            </div>
+             <div id="feedback-container" class="mt-4 text-center">
+                <!-- Feedback text will be loaded here -->
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        const storyTextElement = document.getElementById('story-text');
+        const optionsContainer = document.getElementById('options-container');
+        const storyContentElement = document.getElementById('story-content');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const imageContainer = document.getElementById('image-container');
+
+        // Story and game logic
+        const story = {
+            start: {
+                text: "You are Elara, an innovative fintech specialist at Nexus Bank. Your goal is huge: to create an instant and secure exchange platform for digital assets. However, your previous attempts failed due to the transparency and performance issues of public blockchains. You're now at a crossroads. What will you do?",
+                image: 'https://placehold.co/600x300/1a202c/90cdf4?text=Crossroads',
+                options: [
+                    { text: "Go back to traditional methods.", nextScene: 'fail_traditional' },
+                    { text: "Don't give up, look for a new solution.", nextScene: 'success_research' }
+                ]
+            },
+            fail_traditional: {
+                isFailure: true,
+                text: "Traditional methods are slow, costly, and prone to human error. You realize this path is a dead end.",
+                options: [
+                    { text: "I must find another solution.", nextScene: 'success_research' }
+                ]
+            },
+            success_research: {
+                text: "Your research leads you to 'Canton Network,' a technology that works as a 'network of networks,' much like the internet. You start a new pilot project with Veridia Capital. Your first task: ensure the privacy of sensitive data. What kind of architecture will you build?",
+                image: 'https://placehold.co/600x300/1a202c/90cdf4?text=The+Privacy+Paradox',
+                options: [
+                    { text: "Keep all data on a common ledger.", nextScene: 'fail_transparency' },
+                    { text: "Build a structure where each party sees only authorized data.", nextScene: 'success_privacy' }
+                ]
+            },
+            fail_transparency: {
+                isFailure: true,
+                text: "Veridia's CEO flatly rejects this idea. 'Absolute privacy is essential for financial data!' he says.",
+                options: [
+                    { text: "Right, I must ensure privacy.", nextScene: 'success_privacy' }
+                ]
+            },
+            success_privacy: {
+                text: "Correct! With Canton's 'Virtual Ledger' model, each participant sees only their relevant part of the transaction. Privacy solved. Now, your manager is worried: 'What if the network gets congested?' How will you guarantee performance?",
+                image: 'https://placehold.co/600x300/1a202c/90cdf4?text=Scalability',
+                options: [
+                    { text: "Use the public Global Synchronizer.", nextScene: 'fail_globalonly' },
+                    { text: "Build our own private 'synchronization domain'.", nextScene: 'success_hybrid' }
+                ]
+            },
+            fail_globalonly: {
+                isFailure: true,
+                text: "This leaves your application at the mercy of the network's overall congestion. There must be a better way.",
+                options: [
+                    { text: "I need more control.", nextScene: 'success_hybrid' }
+                ]
+            },
+            success_hybrid: {
+                text: "Perfect. Canton's 'network of networks' architecture shines. You run your app on a private domain for performance, and connect to the {{Global Synchronizer}} for interoperability. This gives you both control and reach. Now for the final test: executing the DvP (Delivery vs. Payment). What is the key property of this {{atomic transaction}} on Canton?",
+                image: 'https://placehold.co/600x300/1a202c/90cdf4?text=Moment+of+Truth',
+                options: [
+                    { text: "The transaction will occur in two stages.", nextScene: 'fail_risk' },
+                    { text: "The transaction will be 'atomic' and happen in one instant.", nextScene: 'success_atomic' }
+                ]
+            },
+            fail_risk: {
+                isFailure: true,
+                text: "This is '{{counterparty risk}}.' What if the money transfer fails after the asset is sent? Canton and its smart contract language {{Daml}} were designed to eliminate this.",
+                options: [
+                    { text: "I must eliminate the risk.", nextScene: 'success_atomic' }
+                ]
+            },
+            success_atomic: {
+                text: "SUCCESS! The Canton Network executes the transaction atomically. The bond and cash are exchanged in a single, indivisible step. Zero counterparty risk. Total privacy. Unmatched performance. Mr. Sterling is impressed.",
+                image: 'https://placehold.co/600x300/1a202c/a7f3d0?text=SUCCESS!',
+                options: [
+                    { text: "See the result", nextScene: 'epilogue' }
+                ]
+            },
+            epilogue: {
+                text: "Your project is a landmark success. You've demonstrated how the Canton Network provides a platform for a true Financial Internet. You even start exploring how the ecosystem is incentivized through a utility token called {{Canton Coin}}, designed to reward real network usage, not speculation. Your adventure in building the future of finance with Canton has just begun.",
+                image: 'https://placehold.co/600x300/1a202c/a7f3d0?text=The+Future',
+                options: [
+                    { text: "Play Again", nextScene: 'start' }
+                ]
+            }
+        };
+
+        let currentScene = 'start';
+
+        function showScene(sceneId) {
+            const scene = story[sceneId];
+            if (!scene) return;
+
+            currentScene = sceneId;
+            
+            // Re-trigger animation
+            storyContentElement.classList.remove('fade-in');
+            void storyContentElement.offsetWidth; 
+            storyContentElement.classList.add('fade-in');
+            
+            storyTextElement.innerText = scene.text;
+            feedbackContainer.innerHTML = '';
+
+            if (scene.image) {
+                imageContainer.innerHTML = `<img src="${scene.image}" alt="Scene visual" class="rounded-lg mx-auto shadow-lg">`;
+            } else {
+                imageContainer.innerHTML = '';
+            }
+
+            optionsContainer.innerHTML = '';
+            scene.options.forEach(option => {
+                const button = document.createElement('button');
+                button.innerText = option.text;
+                button.className = 'option-btn w-full bg-slate-700 text-slate-200 font-medium py-3 px-5 rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-indigo-500';
+                button.addEventListener('click', () => selectOption(option, scene.isFailure));
+                optionsContainer.appendChild(button);
+            });
+        }
+        
+        function selectOption(option, isFailure) {
+            if (isFailure) {
+                const feedbackText = story[currentScene].text;
+                feedbackContainer.innerHTML = `<p class="feedback text-red-400 bg-red-900/50 p-3 rounded-lg">${feedbackText}</p>`;
+                
+                // Show only the button to proceed
+                optionsContainer.innerHTML = '';
+                const backButton = document.createElement('button');
+                backButton.innerText = option.text;
+                backButton.className = 'option-btn w-full bg-yellow-600 text-white font-medium py-3 px-5 rounded-lg hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-yellow-400';
+                backButton.addEventListener('click', () => showScene(option.nextScene));
+                optionsContainer.appendChild(backButton);
+            } else {
+                showScene(option.nextScene);
+            }
+        }
+
+        // Start the game
+        showScene('start');
+
+    </script>
+</body>
+</html>
